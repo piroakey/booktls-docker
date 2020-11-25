@@ -1,0 +1,42 @@
+version: '3.5'
+
+services:
+  openssl.ubuntu:
+    image: openssl.ubuntu
+    container_name: openssl.ubuntu
+    hostname: openssl.ubuntu
+    build:
+      context: ./openssl
+      dockerfile: Dockerfile
+    tty: true
+    networks:
+      bridge-internal:
+          ipv4_address: 172.30.0.2
+
+  remote.ubuntu:
+    image: nginx.ubuntu
+    container_name: nginx.ubuntu
+    hostname: remote.ubuntu
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports: 
+      - 80:10080
+      - 443:10443
+      - 444:10444
+    networks:
+      bridge-internal:
+          ipv4_address: 172.30.0.3
+
+networks: 
+  default:
+    external:
+      name: bridge
+
+  bridge-internal:
+    name: bridge.internal
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.30.0.0/24"
