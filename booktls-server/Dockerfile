@@ -2,15 +2,15 @@
 # Get Started:
 #   docker build -t tls13_nginx .
 #   docker run --name nginx -d -p 443:10443 tls13_nginx
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 LABEL maintainer="ITAKURA Hiroaki <piroakey@gmail.com>"
 
 # OpenSSL Version (see https://www.openssl.org/source/)
-ENV OPENSSL_VERSION 1.1.1h
+ENV OPENSSL_VERSION 3.0.5
 
 # Nginx Version (see https://nginx.org/en/download.html)
-ENV NGINX_VERSION 1.18.0
+ENV NGINX_VERSION 1.22.0
 
 # Noninteractive option
 ENV DEBIAN_FRONTEND=noninteractive

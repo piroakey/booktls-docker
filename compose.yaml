@@ -1,0 +1,36 @@
+services:
+  client: # サービス名
+    image: booktls-client
+    container_name: booktls-client
+    hostname: booktls-client
+    build: 
+      context: ./booktls-client/
+      dockerfile: Dockerfile
+    tty: true
+    networks:
+      compose-link:
+        ipv4_address: 172.30.0.2
+
+  server:
+    image: booktls-server
+    container_name: booktls-server
+    hostname: booktls-server
+    build:
+      context: ./booktls-server
+      dockerfile: Dockerfile
+    ports: 
+      - 80:10080
+      - 443:10443
+      - 444:10444
+    networks:
+      compose-link:
+        ipv4_address: 172.30.0.3
+
+networks: 
+  compose-link:
+    name: docker.internal
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.30.0.0/24"
