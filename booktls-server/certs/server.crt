@@ -1,54 +1,14 @@
-Certificate:
-    Data:
-        Version: 3 (0x2)
-        Serial Number: 2 (0x2)
-    Signature Algorithm: ecdsa-with-SHA256
-        Issuer: C=JP, ST=Tokyo, O=Org, CN=TEST CA
-        Validity
-            Not Before: Feb  6 06:24:13 2019 GMT
-            Not After : Feb  3 06:24:13 2029 GMT
-        Subject: C=JP, ST=Tokyo, O=Org, CN=remote.ubuntu
-        Subject Public Key Info:
-            Public Key Algorithm: id-ecPublicKey
-                Public-Key: (256 bit)
-                pub: 
-                    04:f4:35:44:f4:d5:2d:6c:f7:73:f3:b3:b6:ae:db:
-                    bd:8e:a2:ab:2a:bc:88:17:20:7f:c2:f8:b2:7e:6d:
-                    b8:85:be:18:62:18:76:e1:f5:73:b7:a0:15:a1:74:
-                    9d:a4:3e:60:68:76:b2:89:61:1e:88:21:07:2d:c6:
-                    f3:17:d1:52:76
-                ASN1 OID: prime256v1
-                NIST CURVE: P-256
-        X509v3 extensions:
-            X509v3 Basic Constraints: 
-                CA:FALSE
-            Netscape Comment: 
-                OpenSSL Generated Certificate
-            X509v3 Subject Key Identifier: 
-                0B:C2:35:C3:00:F7:15:E7:B9:A2:AC:21:02:EF:C8:A5:A2:29:F5:A0
-            X509v3 Authority Key Identifier: 
-                keyid:01:F8:BB:47:1E:3E:B9:3C:C9:B1:B8:38:E3:FA:FC:04:B8:2D:C5:E5
-
-            X509v3 Subject Alternative Name: 
-                DNS:remote.ubuntu, DNS:remote.pi
-            X509v3 Extended Key Usage: 
-                TLS Web Server Authentication, TLS Web Client Authentication
-    Signature Algorithm: ecdsa-with-SHA256
-         30:45:02:21:00:c9:91:0c:29:b7:d8:a2:06:f7:f0:8b:91:4f:
-         8d:89:9d:bb:fe:26:a1:23:7c:0f:b9:54:43:d8:fc:60:c5:74:
-         a4:02:20:41:85:93:45:94:de:5b:d7:53:13:e9:69:79:81:82:
-         d3:8a:f0:1b:0e:78:e2:05:76:47:45:1b:78:a7:b6:57:99
 -----BEGIN CERTIFICATE-----
-MIICMDCCAdagAwIBAgIBAjAKBggqhkjOPQQDAjA9MQswCQYDVQQGEwJKUDEOMAwG
-A1UECAwFVG9reW8xDDAKBgNVBAoMA09yZzEQMA4GA1UEAwwHVEVTVCBDQTAeFw0x
-OTAyMDYwNjI0MTNaFw0yOTAyMDMwNjI0MTNaMEMxCzAJBgNVBAYTAkpQMQ4wDAYD
-VQQIDAVUb2t5bzEMMAoGA1UECgwDT3JnMRYwFAYDVQQDDA1yZW1vdGUudWJ1bnR1
-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE9DVE9NUtbPdz87O2rtu9jqKrKryI
-FyB/wviyfm24hb4YYhh24fVzt6AVoXSdpD5gaHayiWEeiCEHLcbzF9FSdqOBwDCB
-vTAJBgNVHRMEAjAAMCwGCWCGSAGG+EIBDQQfFh1PcGVuU1NMIEdlbmVyYXRlZCBD
-ZXJ0aWZpY2F0ZTAdBgNVHQ4EFgQUC8I1wwD3Fee5oqwhAu/IpaIp9aAwHwYDVR0j
-BBgwFoAUAfi7Rx4+uTzJsbg44/r8BLgtxeUwIwYDVR0RBBwwGoINcmVtb3RlLnVi
-dW50dYIJcmVtb3RlLnBpMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAK
-BggqhkjOPQQDAgNIADBFAiEAyZEMKbfYogb38IuRT42Jnbv+JqEjfA+5VEPY/GDF
-dKQCIEGFk0WU3lvXUxPpaXmBgtOK8BsOeOIFdkdFG3intleZ
+MIICEDCCAbagAwIBAgIUCp9rjiUaqAbcEj2n8T8vhTzZjhYwCgYIKoZIzj0EAwIw
+SDELMAkGA1UEBhMCSlAxDjAMBgNVBAgTBVRva3lvMRAwDgYDVQQHEwdBa2FiYW5l
+MRcwFQYDVQQDEw5ib29rdGxzLXNlcnZlcjAeFw0yMjA5MTUwNjE4MDBaFw0zMjA5
+MTUwNjE4MDBaMEgxCzAJBgNVBAYTAkpQMQ4wDAYDVQQIEwVUb2t5bzEQMA4GA1UE
+BxMHQWthYmFuZTEXMBUGA1UEAxMOYm9va3Rscy1zZXJ2ZXIwWTATBgcqhkjOPQIB
+BggqhkjOPQMBBwNCAASAoN98KsFYiw9Mlwx5eoq0kn3hpAN25KseAvJyuB53LONK
+SRXyhXhEoqXTCDIgxIVDfXAD+mjumOIhqc1GeJo6o34wfDAOBgNVHQ8BAf8EBAMC
+BaAwEwYDVR0lBAwwCgYIKwYBBQUHAwEwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQU
+kDvyyZHrSWW+ETc1MRV01F3KV70wKAYDVR0RBCEwH4IOYm9va3Rscy1zZXJ2ZXKC
+DWJvb2t0bHMtYnVpbGQwCgYIKoZIzj0EAwIDSAAwRQIhAPFGv6mA14pB9mcVhxIX
+sPpqY7N+1FmxMhUmI7kkOh25AiBe4Djf1iEGq24WUM2iwPy+0aV6t7ldvNlJL2Sa
+XOEQDQ==
 -----END CERTIFICATE-----
