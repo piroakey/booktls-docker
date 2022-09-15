@@ -3,9 +3,11 @@ services:
     image: booktls-client
     container_name: booktls-client
     hostname: booktls-client
-    build: 
+    build:
       context: ./booktls-client/
       dockerfile: Dockerfile
+    volumes:
+      - ./share:/share
     tty: true
     networks:
       compose-link:
@@ -18,7 +20,7 @@ services:
     build:
       context: ./booktls-server
       dockerfile: Dockerfile
-    ports: 
+    ports:
       - 80:10080
       - 443:10443
       - 444:10444
@@ -26,7 +28,7 @@ services:
       compose-link:
         ipv4_address: 172.30.0.3
 
-networks: 
+networks:
   compose-link:
     name: docker.internal
     driver: bridge

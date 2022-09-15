@@ -1,7 +1,4 @@
-# Nginx build with OpenSSL 1.1.1a(TLS1.3 supported) container image.
-# Get Started:
-#   docker build -t tls13_nginx .
-#   docker run --name nginx -d -p 443:10443 tls13_nginx
+# Nginx build with OpenSSL container image.
 FROM ubuntu:22.04
 
 LABEL maintainer="ITAKURA Hiroaki <piroakey@gmail.com>"
@@ -21,9 +18,6 @@ WORKDIR /root
 
 # www-data user
 RUN usermod www-data --home /etc/nginx --shell /sbin/nologin
-
-# Ubuntu japanese repository
-RUN sed -i.bak -e "s%http://[^ ]\+%http://ftp.jaist.ac.jp/pub/Linux/ubuntu/%g" /etc/apt/sources.list
 
 # Install deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -113,7 +107,7 @@ RUN nginx -V
 USER www-data
 WORKDIR /etc/nginx
 
-# 10080:http 10443:https(tls1.3, tls1.2) 10444:https(tls1.2)
+# 10080:http 10443:https(tls1.3, tls1.2) 10444:https(minimal curves)
 EXPOSE 10080 10443 10444
 
 CMD ["nginx", "-g", "daemon off;"]
