@@ -1,10 +1,10 @@
 #include "common.h"
 
 /* サーバ証明書のパス */
-#define SERVER_CERT "./cert/server.crt"
+#define SERVER_CERT "./certs/server.crt"
 
 /* キーファイル */
-#define SERVER_KEY  "./cert/server.key"
+#define SERVER_KEY  "./certs/server.key"
 
 /* ポート番号(commom.c) */
 extern const int server_port;

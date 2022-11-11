@@ -8,7 +8,7 @@ static const char* server_host = "booktls-server";
 extern const int server_port;
 
 /* CA証明書のパス */
-#define CA_CERT "./cert/ca.pem"
+#define CA_CERT "./certs/ca.pem"
 
 /* クライアントコンテキストの設定関数 */
 void configure_client_context(SSL_CTX *ctx)
