@@ -1,6 +1,9 @@
 #include "common.h"
 
-/* ポート番号(commom.c) */
+/* サーバのホスト名 */
+static const char* rem_server_ip = "booktls-server";
+
+/* サーバのポート番号(commom.c) */
 extern const int server_port;
 
 /* CA証明書のパス */
@@ -58,12 +61,10 @@ int main()
     size_t rxcap = sizeof(rxbuf);
     int rxlen;
 
-    char *rem_server_ip = NULL;
-
     struct sockaddr_in addr;
 
     /* コンテキストの作成 */
-    ssl_ctx = create_context(true);
+    ssl_ctx = create_context(false);
 
     printf("We are the client\n\n");
 
@@ -142,4 +143,3 @@ int main()
     
     printf("client exiting\n");
 }
-
