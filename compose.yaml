@@ -24,10 +24,10 @@ services:
       dockerfile: Dockerfile
     cap_add:
       - NET_ADMIN
-    ports:
-      - 80:10080
-      - 443:10443
-      - 444:10444
+    # ports:
+    #   - 80:10080
+    #   - 443:10443
+    #   - 444:10444
     networks:
       compose-link:
         ipv4_address: 172.30.0.3

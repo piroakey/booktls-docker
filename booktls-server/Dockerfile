@@ -107,8 +107,10 @@ RUN nginx -V
 USER www-data
 WORKDIR /etc/nginx
 
-# 10080:http 10443:https(tls1.3, tls1.2) 10444:https(minimal curves)
-EXPOSE 10080 10443 10444
+# 10080:http 10443:https(tls1.3, tls1.2)
+# 10444:https(minimal curves)
+# 443: https(original prog)
+EXPOSE 443 10080 10443 10444
 
 CMD ["nginx", "-g", "daemon off;"]
 
