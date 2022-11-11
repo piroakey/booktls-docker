@@ -22,6 +22,8 @@ services:
     build:
       context: ./booktls-server
       dockerfile: Dockerfile
+    volumes:
+      - ./share:/share
     cap_add:
       - NET_ADMIN
     # ports:

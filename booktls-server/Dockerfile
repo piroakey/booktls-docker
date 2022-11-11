@@ -12,6 +12,11 @@ ENV NGINX_VERSION 1.22.1
 # Noninteractive option
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Add User
+RUN useradd -m openssl \
+ && gpasswd -a openssl sudo \
+ && echo "openssl:openssl" | chpasswd
+
 # Build as root
 USER root
 WORKDIR /root
@@ -28,12 +33,29 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpcre3-dev \
     make \
     perl \
+    sudo \
+    vim \
     zlib1g-dev \
     libxslt-dev \
     libgd-dev \
     tzdata \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
+
+ # Add sudoers
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+ RUN curl -sSLO https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz \
+ && tar xvf openssl-$OPENSSL_VERSION.tar.gz \
+ && rm -v openssl-$OPENSSL_VERSION.tar.gz \
+ && cd "/root/openssl-$OPENSSL_VERSION/" \
+ && ./config --prefix=/opt/openssl \
+        shared \
+        enable-ec_nistp_64_gcc_128 \
+ && make depend \
+ && make -j ${nproc} \
+ && make install_sw \
+ && rm -R "/root/openssl-$OPENSSL_VERSION/"
 
 RUN curl -sSLO https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz \
  && curl -sSLO https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz \
@@ -81,10 +103,16 @@ RUN curl -sSLO https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz \
         --with-openssl-opt="enable-ec_nistp_64_gcc_128" \
  && make -j ${nproc} \
  && make install \
- && apt-get purge -y --auto-remove curl gcc perl make \
  && rm -R "/root/nginx-$NGINX_VERSION" \
  && rm -R "/root/openssl-$OPENSSL_VERSION/"
 
+# Add entry script
+COPY init.sh /home/openssl/init.sh
+RUN chown openssl:openssl /home/openssl/init.sh
+
+# share
+RUN mkdir -p /share
+RUN chown -R openssl:openssl /share
 
 # Copy cert and /etc/nginx/nginx.conf etc.
 COPY conf/nginx.conf /etc/nginx/nginx.conf
@@ -103,6 +131,12 @@ RUN chown -R www-data:www-data /etc/nginx \
 # build options report
 RUN nginx -V
 
+USER openssl
+WORKDIR /home/openssl
+
+# init script
+RUN echo '. /home/openssl/init.sh' >> ~/.bashrc
+
 # Launch
 USER www-data
 WORKDIR /etc/nginx
@@ -113,4 +147,3 @@ WORKDIR /etc/nginx
 EXPOSE 443 10080 10443 10444
 
 CMD ["nginx", "-g", "daemon off;"]
-
