@@ -39,6 +39,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxslt-dev \
     libgd-dev \
     tzdata \
+    dnsutils \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
