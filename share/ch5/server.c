@@ -15,7 +15,7 @@ static volatile bool server_running = true;
 /* サーバコンテキストの設定関数 */
 void configure_server_context(SSL_CTX *ctx)
 {
-    /* Set the key and cert */
+    /* サーバ証明書とキーファイルの設定 */
     if (SSL_CTX_use_certificate_chain_file(ctx, SERVER_CERT) <= 0) {
         ERR_print_errors_fp(stderr);
         exit(EXIT_FAILURE);
