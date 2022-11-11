@@ -51,7 +51,7 @@ int main(void)
     /* サーバコンテキストの設定 */
     configure_server_context(ssl_ctx);
 
-    /* サーバソケット作成  */
+    /* サーバソケットの生成  */
     server_socket = create_socket(true);
 
     while (server_running) {
@@ -65,7 +65,7 @@ int main(void)
 
         printf("Client TCP connection accepted\n");
 
-        /* 受け付けたクライアントのソケットを利用したサーバSSL構造体の作成 */
+        /* サーバSSL構造体の作成 */
         ssl = SSL_new(ssl_ctx);
         SSL_set_fd(ssl, client_skt);
 

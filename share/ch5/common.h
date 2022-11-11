@@ -7,6 +7,7 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 
+/* ソケット作成関数 */
 int create_socket(bool isServer);
 
 /* SSLコンテキスト作成関数 */
