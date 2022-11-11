@@ -24,6 +24,21 @@ void configure_client_context(SSL_CTX *ctx)
     }
 }
 
+void close_client(SSL *ssl, SSL_CTX *ssl_ctx, int client_skt, char *txbuf, size_t txcap)
+{
+    if (ssl != NULL) {
+        SSL_shutdown(ssl);
+        SSL_free(ssl);
+    }
+    SSL_CTX_free(ssl_ctx);
+
+    if (client_skt != -1)
+        close(client_skt);
+
+    if (txbuf != NULL && txcap > 0)
+        free(txbuf);
+}
+
 int main()
 {
     SSL_CTX *ssl_ctx = NULL;
@@ -64,7 +79,8 @@ int main()
     /* TCP接続の実行 */
     if (connect(client_skt, (struct sockaddr*) &addr, sizeof(addr)) != 0) {
         perror("Unable to TCP connect to server");
-        goto exit;
+        /* 失敗した場合は接続を閉じて終了 */
+        close_client(ssl, ssl_ctx, client_skt, txbuf, txcap);
     } else {
         printf("TCP connection to server successful\n");
     }
@@ -121,19 +137,9 @@ int main()
         ERR_print_errors_fp(stderr);
     }
 
-    exit:
     /* 接続を閉じる */
-    if (ssl != NULL) {
-        SSL_shutdown(ssl);
-        SSL_free(ssl);
-    }
-    SSL_CTX_free(ssl_ctx);
-
-    if (client_skt != -1)
-        close(client_skt);
-
-    if (txbuf != NULL && txcap > 0)
-        free(txbuf);
-
-    printf("sslecho exiting\n");
+    close_client(ssl, ssl_ctx, client_skt, txbuf, txcap);
+    
+    printf("client exiting\n");
 }
+
