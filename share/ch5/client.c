@@ -1,7 +1,8 @@
+#include <netdb.h>
 #include "common.h"
 
 /* サーバのホスト名 */
-static const char* rem_server_ip = "booktls-server";
+static const char* server_host = "booktls-server";
 
 /* サーバのポート番号(commom.c) */
 extern const int server_port;
@@ -48,8 +49,10 @@ int main()
     SSL *ssl = NULL;
 
     int result;
+    int err;
 
     int client_skt = -1;
+    char server_port_str[16];
 
     /* 送信バッファ */
     char *txbuf = NULL;
@@ -61,7 +64,8 @@ int main()
     size_t rxcap = sizeof(rxbuf);
     int rxlen;
 
-    struct sockaddr_in addr;
+    struct addrinfo hints, *res;
+    memset(&hints, 0, sizeof(hints));
 
     /* コンテキストの作成 */
     ssl_ctx = create_context(false);
@@ -73,26 +77,31 @@ int main()
 
     /* クライアントソケットの生成 */
     client_skt = create_socket(false);
-    /* 接続先アドレスの生成 */
-    addr.sin_family = AF_INET;
-    inet_pton(AF_INET, rem_server_ip, &addr.sin_addr.s_addr);
-    addr.sin_port = htons(server_port);
-    /* TCP接続の実行 */
-    if (connect(client_skt, (struct sockaddr*) &addr, sizeof(addr)) != 0) {
-        perror("Unable to TCP connect to server");
-        /* 失敗した場合は接続を閉じて終了 */
+    /*実験中*/
+    hints.ai_socktype = SOCK_STREAM; /*TODO 重複している整理*/
+    hints.ai_family = AF_INET; /*TODO 重複している整理*/
+    sprintf(server_port_str, "%d", server_port);
+    if ((err = getaddrinfo(server_host, server_port_str, &hints, &res)) != 0) {
+        perror("getaddrinfo failed");
         close_client(ssl, ssl_ctx, client_skt, txbuf, txcap);
+    }
+    /*実験中*/
+    /* TCP接続の実行 */
+    if (connect(client_skt, res->ai_addr,  res->ai_addrlen) != 0) {
+        perror("Unable to TCP connect to server");
+        goto exit;
     } else {
         printf("TCP connection to server successful\n");
     }
+    freeaddrinfo(res);
 
     /* クライアントSSL構造体の作成 */
     ssl = SSL_new(ssl_ctx);
     SSL_set_fd(ssl, client_skt);
     /* SNIを利用する */
-    SSL_set_tlsext_host_name(ssl, rem_server_ip);
+    SSL_set_tlsext_host_name(ssl, server_host);
     /* サーバのホスト名をチェックする */
-    SSL_set1_host(ssl, rem_server_ip);
+    SSL_set1_host(ssl, server_host);
 
     /* SSL接続の開始 */
     if (SSL_connect(ssl) == 1) {
@@ -137,9 +146,21 @@ int main()
 
         ERR_print_errors_fp(stderr);
     }
+    exit:
+    /* Close up */
+    if (ssl != NULL) {
+        SSL_shutdown(ssl);
+        SSL_free(ssl);
+    }
+    SSL_CTX_free(ssl_ctx);
 
-    /* 接続を閉じる */
-    close_client(ssl, ssl_ctx, client_skt, txbuf, txcap);
-    
-    printf("client exiting\n");
+    if (client_skt != -1)
+        close(client_skt);
+
+    if (txbuf != NULL && txcap > 0)
+        free(txbuf);
+
+    printf("end test\n");
+
+    return 0;
 }
