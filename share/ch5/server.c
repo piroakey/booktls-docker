@@ -27,8 +27,9 @@ void configure_server_context(SSL_CTX *ctx)
     }
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
+    bool isHrr = false;
     SSL_CTX *ssl_ctx = NULL;
     SSL *ssl = NULL;
 
@@ -42,6 +43,10 @@ int main(void)
 
     struct sockaddr_in addr;
     unsigned int addr_len = sizeof(addr);
+
+    if (argc >= 2) {
+        isHrr = (argv[1][0] == 'h') ? true : false;
+    }
     
     /* コンテキストの作成 */
     ssl_ctx = create_context(true);
@@ -50,6 +55,14 @@ int main(void)
 
     /* サーバコンテキストの設定 */
     configure_server_context(ssl_ctx);
+
+    /* HRRを起こすためにグループを絞る */
+    if (isHrr) {
+        SSL_CTX_set1_groups_list(ssl_ctx, "P-521");
+        printf("HRR mode\n");
+    }
+
+    SSL_CTX_set_max_early_data(ssl_ctx, 32);
 
     /* サーバソケットの生成  */
     server_socket = create_socket(true, AF_INET, SOCK_STREAM);
