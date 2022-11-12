@@ -77,6 +77,13 @@ int main(void)
 
             printf("Client SSL connection accepted\n\n");
 
+            /* セッション再開がされたか */
+            if (SSL_session_reused(ssl)) {
+                printf("session reused\n");
+            } else {
+                printf("new session\n");
+            }
+
             /* サーバの出力ループ */
             while (true) {
                 /* クライアントからメッセージを取得する */
