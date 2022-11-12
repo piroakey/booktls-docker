@@ -52,7 +52,7 @@ int main(void)
     configure_server_context(ssl_ctx);
 
     /* サーバソケットの生成  */
-    server_socket = create_socket(true);
+    server_socket = create_socket(true, AF_INET, SOCK_STREAM);
 
     while (server_running) {
         /* クライアントからの接続を待ち受け */

@@ -4,14 +4,14 @@
 const int server_port = 443;
 
 /* ソケット作成関数 */
-int create_socket(bool isServer)
+int create_socket(bool isServer, int family, int socktype)
 {
     int skt;
     int optval = 1;
     struct sockaddr_in addr;
 
     /* ソケットの作成 */
-    skt = socket(AF_INET, SOCK_STREAM, 0);
+    skt = socket(family, socktype, 0);
     if (skt < 0) {
         perror("Unable to create socket");
         exit(EXIT_FAILURE);
@@ -19,7 +19,7 @@ int create_socket(bool isServer)
 
     /* サーバソケットの場合 */
     if (isServer) {
-        addr.sin_family = AF_INET;
+        addr.sin_family = family;
         addr.sin_port = htons(server_port);
         addr.sin_addr.s_addr = INADDR_ANY;
 
