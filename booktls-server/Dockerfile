@@ -40,6 +40,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgd-dev \
     tzdata \
     dnsutils \
+    gdb \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 

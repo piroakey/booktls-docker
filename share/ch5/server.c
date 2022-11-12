@@ -82,6 +82,39 @@ int main(int argc, char *argv[])
         ssl = SSL_new(ssl_ctx);
         SSL_set_fd(ssl, client_skt);
 
+        /* early_dataの読み込み */
+        int write_header = 1, edret = SSL_READ_EARLY_DATA_ERROR;
+        size_t readbytes;
+
+        char buf[32] = {0};
+        size_t bufsize = 32;
+        while (edret != SSL_READ_EARLY_DATA_FINISH) {
+            for (;;) {
+                edret = SSL_read_early_data(ssl, (void*)buf, bufsize, &readbytes);
+                if (edret != SSL_READ_EARLY_DATA_ERROR)
+                    break;
+
+                switch (SSL_get_error(ssl, 0)) {
+                case SSL_ERROR_WANT_WRITE:
+                case SSL_ERROR_WANT_ASYNC:
+                case SSL_ERROR_WANT_READ:
+                    /* Just keep trying - busy waiting */
+                    continue;
+                default:
+                    printf("Error reading early data\n");
+                    ERR_print_errors_fp(stderr);
+                }
+            }
+
+            if (readbytes > 0) {
+                if (write_header) {
+                    printf("Early data received:\n");
+                    write_header = 0;
+                }
+                printf("%s\n", buf);
+            }
+        }
+
         /* クライアントからのSSLコネクション待ち受け */
         if (SSL_accept(ssl) <= 0) {
             ERR_print_errors_fp(stderr);
