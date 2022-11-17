@@ -30,6 +30,7 @@ void configure_server_context(SSL_CTX *ctx)
 int main(int argc, char *argv[])
 {
     bool isHrr = false;
+    bool isEarly = false;
     SSL_CTX *ssl_ctx = NULL;
     SSL *ssl = NULL;
 
@@ -46,12 +47,14 @@ int main(int argc, char *argv[])
 
     if (argc >= 2) {
         isHrr = (argv[1][0] == 'h') ? true : false;
+        isEarly = (argv[1][0] == 'e') ? true : false;
     }
     
     /* コンテキストの作成 */
     ssl_ctx = create_context(true);
 
-    printf("We are the server on port: %d\n\n", server_port);
+    printf("We are the server on port: %d\n", server_port);
+    printf("isHrr:%d isEarly:%d\n\n", isHrr, isEarly);
 
     /* サーバコンテキストの設定 */
     configure_server_context(ssl_ctx);
@@ -83,35 +86,37 @@ int main(int argc, char *argv[])
         SSL_set_fd(ssl, client_skt);
 
         /* early_dataの読み込み */
-        int write_header = 1, edret = SSL_READ_EARLY_DATA_ERROR;
-        size_t readbytes;
+        if(isEarly){
+            int write_header = 1, edret = SSL_READ_EARLY_DATA_ERROR;
+            size_t readbytes;
 
-        char buf[32] = {0};
-        size_t bufsize = sizeof(buf);
-        while (edret != SSL_READ_EARLY_DATA_FINISH) {
-            for (;;) {
-                edret = SSL_read_early_data(ssl, (void*)buf, bufsize, &readbytes);
-                if (edret != SSL_READ_EARLY_DATA_ERROR)
-                    break;
+            char buf[32] = {0};
+            size_t bufsize = sizeof(buf);
+            while (edret != SSL_READ_EARLY_DATA_FINISH) {
+                for (;;) {
+                    edret = SSL_read_early_data(ssl, (void*)buf, bufsize, &readbytes);
+                    if (edret != SSL_READ_EARLY_DATA_ERROR)
+                        break;
 
-                switch (SSL_get_error(ssl, 0)) {
-                case SSL_ERROR_WANT_WRITE:
-                case SSL_ERROR_WANT_ASYNC:
-                case SSL_ERROR_WANT_READ:
-                    /* Just keep trying - busy waiting */
-                    continue;
-                default:
-                    printf("Error reading early data\n");
-                    ERR_print_errors_fp(stderr);
+                    switch (SSL_get_error(ssl, 0)) {
+                    case SSL_ERROR_WANT_WRITE:
+                    case SSL_ERROR_WANT_ASYNC:
+                    case SSL_ERROR_WANT_READ:
+                        /* Just keep trying - busy waiting */
+                        continue;
+                    default:
+                        printf("Error reading early data\n");
+                        ERR_print_errors_fp(stderr);
+                    }
                 }
-            }
 
-            if (readbytes > 0) {
-                if (write_header) {
-                    printf("Early data received:\n");
-                    write_header = 0;
+                if (readbytes > 0) {
+                    if (write_header) {
+                        printf("Early data received:\n");
+                        write_header = 0;
+                    }
+                    printf("%s\n", buf);
                 }
-                printf("%s\n", buf);
             }
         }
 
