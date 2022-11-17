@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
         size_t readbytes;
 
         char buf[32] = {0};
-        size_t bufsize = 32;
+        size_t bufsize = sizeof(buf);
         while (edret != SSL_READ_EARLY_DATA_FINISH) {
             for (;;) {
                 edret = SSL_read_early_data(ssl, (void*)buf, bufsize, &readbytes);
@@ -143,13 +143,6 @@ int main(int argc, char *argv[])
                 }
                 /* ヌル終端を設定 */
                 rxbuf[rxlen] = 0;
-                /* "kill"の判定 */
-                if (strcmp(rxbuf, "kill\n") == 0) {
-                    /* サーバの終了 */
-                    printf("Server received 'kill' command\n");
-                    server_running = false;
-                    break;
-                }
                 /* 受信メッセージの表示 */
                 printf("Received: %s", rxbuf);
                 /* クライアントへエコーバック */

@@ -17,7 +17,6 @@ static const char* txmsg_hrr1 = "HRR test\n";
 static const char* txmsg_early = "early data test\n";
 
 static SSL_SESSION *session = NULL;
-static SSL_SESSION *psksess = NULL;
 
 /* クライアントコンテキストの設定関数 */
 void configure_client_context(SSL_CTX *ctx)
@@ -139,7 +138,6 @@ static int new_session_cb(SSL *s, SSL_SESSION *sess)
     if (session == NULL) {
         SSL_SESSION_up_ref(sess);
         session = sess;
-        psksess = sess;
     }
 
     if (SSL_version(s) == TLS1_3_VERSION) {
@@ -169,6 +167,8 @@ void session_resumption(void)
     char rxbuf[128];
     size_t rxcap = sizeof(rxbuf);
     int rxlen;
+
+    session = NULL;
 
     struct addrinfo hints, *res;
     memset(&hints, 0, sizeof(hints));
@@ -249,6 +249,7 @@ void session_resumption(void)
 
         if (ssl != NULL) {
             SSL_shutdown(ssl);
+            SSL_free(ssl);
         }
 
         if (client_skt != -1) {
@@ -257,11 +258,7 @@ void session_resumption(void)
         count++;
     } while(count <= 1);
 
-    if (ssl != NULL) {
-        SSL_free(ssl);
-    }
-
-    SSL_SESSION_free(session);
+    ssl = NULL;
     session = NULL;
 
     SSL_CTX_free(ssl_ctx);
@@ -394,6 +391,8 @@ void early_data(void)
     size_t rxcap = sizeof(rxbuf);
     int rxlen;
 
+    session = NULL;
+
     struct addrinfo hints, *res;
     memset(&hints, 0, sizeof(hints));
 
@@ -442,10 +441,10 @@ void early_data(void)
         SSL_set1_host(ssl, server_host);
 
         /* early_dataの送信 */
-        if ((psksess != NULL) && SSL_SESSION_get_max_early_data(psksess) > 0) {
+        if ((session != NULL) && SSL_SESSION_get_max_early_data(session) > 0) {
             size_t writtenbytes;
-            char *cbuf = "this_is_early_data";
-            while (!SSL_write_early_data(ssl, cbuf, 18, &writtenbytes)) {
+            char cbuf[] = "this_is_early_data";
+            while (!SSL_write_early_data(ssl, cbuf, strlen(cbuf), &writtenbytes)) {
                 switch (SSL_get_error(ssl, 0)) {
                 case SSL_ERROR_WANT_WRITE:
                 case SSL_ERROR_WANT_ASYNC:
@@ -495,6 +494,7 @@ void early_data(void)
 
         if (ssl != NULL) {
             SSL_shutdown(ssl);
+            SSL_free(ssl);
         }
 
         if (client_skt != -1) {
@@ -503,15 +503,8 @@ void early_data(void)
         count++;
     } while(count <= 1);
 
-    if (ssl != NULL) {
-        SSL_free(ssl);
-    }
-
-    SSL_SESSION_free(session);
+    ssl = NULL;
     session = NULL;
-
-    SSL_SESSION_free(psksess);
-    psksess = NULL;
 
     SSL_CTX_free(ssl_ctx);
 }
