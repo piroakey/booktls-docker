@@ -25,6 +25,9 @@ void configure_server_context(SSL_CTX *ctx)
         ERR_print_errors_fp(stderr);
         exit(EXIT_FAILURE);
     }
+
+    /* TLS1.3のみ許可する */
+    SSL_CTX_set_options(ctx, SSL_OP_NO_SSLv3 | SSL_OP_NO_TLSv1 | SSL_OP_NO_TLSv1_1 | SSL_OP_NO_TLSv1_2);
 }
 
 int main(int argc, char *argv[])
@@ -62,10 +65,11 @@ int main(int argc, char *argv[])
     /* HRRを起こすためにグループを絞る */
     if (isHrr) {
         SSL_CTX_set1_groups_list(ssl_ctx, "P-521");
-        printf("HRR mode\n");
     }
 
-    SSL_CTX_set_max_early_data(ssl_ctx, 32);
+    if (isEarly) {
+        SSL_CTX_set_max_early_data(ssl_ctx, 32);
+    }
 
     /* サーバソケットの生成  */
     server_socket = create_socket(true, AF_INET, SOCK_STREAM);
