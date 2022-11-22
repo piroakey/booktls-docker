@@ -18,6 +18,13 @@ static const char* txmsg_early = "early data test\n";
 
 static SSL_SESSION *session = NULL;
 
+void configure_client_context(SSL_CTX *ctx);
+void full_handshake(void);
+static int new_session_cb(SSL *s, SSL_SESSION *sess);
+void session_resumption(void);
+void hello_retry_request(void);
+void early_data(void);
+
 /* クライアントコンテキストの設定関数 */
 void configure_client_context(SSL_CTX *ctx)
 {

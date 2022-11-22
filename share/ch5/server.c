@@ -12,6 +12,8 @@ extern const int server_port;
 /* サーバ実行フラグ */
 static volatile bool server_running = true;
 
+void configure_server_context(SSL_CTX *ctx);
+
 /* サーバコンテキストの設定関数 */
 void configure_server_context(SSL_CTX *ctx)
 {
