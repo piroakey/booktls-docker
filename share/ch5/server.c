@@ -1,3 +1,4 @@
+#include <signal.h>
 #include "common.h"
 
 /* サーバ証明書のパス */
@@ -13,6 +14,14 @@ extern const int server_port;
 static volatile bool server_running = true;
 
 void configure_server_context(SSL_CTX *ctx);
+
+static SSL_CTX *ssl_ctx = NULL;
+static SSL *ssl = NULL;
+
+static int server_socket = -1;
+static int client_skt = -1;
+
+void signal_handler(int sig);
 
 /* サーバコンテキストの設定関数 */
 void configure_server_context(SSL_CTX *ctx)
@@ -36,11 +45,6 @@ int main(int argc, char *argv[])
 {
     bool isHrr = false;
     bool isEarly = false;
-    SSL_CTX *ssl_ctx = NULL;
-    SSL *ssl = NULL;
-
-    int server_socket = -1;
-    int client_skt = -1;
 
     /* 受信バッファ */
     char rxbuf[128];
@@ -49,6 +53,10 @@ int main(int argc, char *argv[])
 
     struct sockaddr_in addr;
     unsigned int addr_len = sizeof(addr);
+
+    if (signal(SIGINT, signal_handler) == SIG_ERR) {
+        exit(EXIT_FAILURE);
+    }
 
     if (argc >= 2) {
         isHrr = (argv[1][0] == 'h') ? true : false;
@@ -167,8 +175,47 @@ int main(int argc, char *argv[])
             SSL_shutdown(ssl);
             SSL_free(ssl);
             close(client_skt);
+            ssl = NULL;
+            client_skt = -1;
         }
     }
     printf("Server exiting...\n");
 
+    if(ssl != NULL){
+        SSL_shutdown(ssl);
+        SSL_free(ssl);
+    }
+
+    if (client_skt != -1){
+        close(client_skt);
+    }
+
+    if (server_socket != -1){
+        close(server_socket);
+    }
+
+    SSL_CTX_free(ssl_ctx);
+
+    exit(EXIT_SUCCESS);
+}
+
+void signal_handler(int sig){
+    printf("signal %d received. exiting...\n", sig);
+
+    if(ssl != NULL){
+        SSL_shutdown(ssl);
+        SSL_free(ssl);
+    }
+
+    if (client_skt != -1){
+        close(client_skt);
+    }
+
+    if (server_socket != -1){
+        close(server_socket);
+    }
+
+    SSL_CTX_free(ssl_ctx);
+
+    exit(EXIT_SUCCESS);
 }

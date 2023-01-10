@@ -93,9 +93,8 @@ void full_handshake(void)
         ssl = SSL_new(ssl_ctx);
         SSL_set_fd(ssl, client_skt);
 
-        SSL_set_tlsext_host_name(ssl, server_host);
-
         SSL_set1_host(ssl, server_host);
+        SSL_set_tlsext_host_name(ssl, server_host);
 
         if (SSL_connect(ssl) == 1) {
 
@@ -222,8 +221,9 @@ void session_resumption(void)
         }
 
         SSL_set_fd(ssl, client_skt);
-        SSL_set_tlsext_host_name(ssl, server_host);
         SSL_set1_host(ssl, server_host);
+        SSL_set_tlsext_host_name(ssl, server_host);
+
 
         if (SSL_connect(ssl) == 1) {
 
@@ -268,6 +268,7 @@ void session_resumption(void)
         count++;
     } while(count <= 1);
 
+    SSL_SESSION_free(session);
     ssl = NULL;
     session = NULL;
 
@@ -306,7 +307,7 @@ void hello_retry_request(void)
     configure_client_context(ssl_ctx);
 
     /* supported_groupsをP-256とP-521に限定する */
-    SSL_CTX_set1_groups_list(ssl_ctx, " P-256:P-521");
+    SSL_CTX_set1_groups_list(ssl_ctx, "P-256:P-521");
 
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
@@ -331,9 +332,8 @@ void hello_retry_request(void)
         ssl = SSL_new(ssl_ctx);
         SSL_set_fd(ssl, client_skt);
 
-        SSL_set_tlsext_host_name(ssl, server_host);
-
         SSL_set1_host(ssl, server_host);
+        SSL_set_tlsext_host_name(ssl, server_host);
 
         if (SSL_connect(ssl) == 1) {
 
@@ -446,9 +446,8 @@ void early_data(void)
 
         SSL_set_fd(ssl, client_skt);
 
-        SSL_set_tlsext_host_name(ssl, server_host);
-
         SSL_set1_host(ssl, server_host);
+        SSL_set_tlsext_host_name(ssl, server_host);
 
         /* early_dataの送信 */
         if ((session != NULL) && SSL_SESSION_get_max_early_data(session) > 0) {
