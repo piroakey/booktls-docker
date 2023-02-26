@@ -58,6 +58,10 @@ RUN curl -sSLO https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz \
 COPY ca.pem /home/openssl/ca.pem
 RUN chown openssl:openssl /home/openssl/ca.pem
 
+# Add Server Cert
+COPY server.crt /home/openssl/server.crt
+RUN chown openssl:openssl /home/openssl/server.crt
+
 # Add entry script
 COPY init.sh /home/openssl/init.sh
 RUN chown openssl:openssl /home/openssl/init.sh
