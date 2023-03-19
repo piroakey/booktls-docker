@@ -61,6 +61,10 @@ RUN chown openssl:openssl /home/openssl/ca.pem
 COPY init.sh /home/openssl/init.sh
 RUN chown openssl:openssl /home/openssl/init.sh
 
+# Add .vimrc
+COPY .vimrc /home/openssl/.vimrc
+RUN chown openssl:openssl /home/openssl/.vimrc
+
 # share
 RUN mkdir -p /share
 RUN chown -R openssl:openssl /share

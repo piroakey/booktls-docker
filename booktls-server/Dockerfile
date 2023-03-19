@@ -112,6 +112,10 @@ RUN curl -sSLO https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz \
 COPY init.sh /home/openssl/init.sh
 RUN chown openssl:openssl /home/openssl/init.sh
 
+# Add .vimrc
+COPY .vimrc /home/openssl/.vimrc
+RUN chown openssl:openssl /home/openssl/.vimrc
+
 # share
 RUN mkdir -p /share
 RUN chown -R openssl:openssl /share
