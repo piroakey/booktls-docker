@@ -4,10 +4,10 @@ FROM ubuntu:22.04
 LABEL maintainer="ITAKURA Hiroaki <piroakey@gmail.com>"
 
 # OpenSSL Version (see https://www.openssl.org/source/)
-ENV OPENSSL_VERSION 3.0.7
+ENV OPENSSL_VERSION 3.0.12
 
 # Nginx Version (see https://nginx.org/en/download.html)
-ENV NGINX_VERSION 1.22.1
+ENV NGINX_VERSION 1.24.0
 
 # Noninteractive option
 ENV DEBIAN_FRONTEND=noninteractive
