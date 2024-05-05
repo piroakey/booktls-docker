@@ -69,6 +69,9 @@ RUN chown openssl:openssl /home/openssl/init.sh
 USER openssl
 WORKDIR /home/openssl
 
+# Replace Win linefeeds with the Linux ones 
+RUN sed -i 's/\r$//g' /home/openssl/init.sh 
+
 # init script
 RUN echo '. /home/openssl/init.sh' >> ~/.bashrc
 
