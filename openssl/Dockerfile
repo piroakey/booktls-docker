@@ -18,9 +18,6 @@ RUN useradd -m openssl \
 USER root
 WORKDIR /root
 
-# Ubuntu japanese repository
-RUN sed -i.bak -e "s%http://[^ ]\+%http://ftp.jaist.ac.jp/pub/Linux/ubuntu/%g" /etc/apt/sources.list
-
 # Install deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
