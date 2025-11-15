@@ -4,7 +4,7 @@ FROM ubuntu:22.04
 LABEL maintainer="ITAKURA Hiroaki <piroakey@gmail.com>"
 
 # OpenSSL Version (see https://www.openssl.org/source/)
-ENV OPENSSL_VERSION 3.0.12
+ENV OPENSSL_VERSION=3.0.12
 
 # Noninteractive option
 ENV DEBIAN_FRONTEND=noninteractive
@@ -17,9 +17,6 @@ RUN useradd -m openssl \
 # Build as root
 USER root
 WORKDIR /root
-
-# Ubuntu japanese repository
-RUN sed -i.bak -e "s%http://[^ ]\+%http://ftp.jaist.ac.jp/pub/Linux/ubuntu/%g" /etc/apt/sources.list
 
 # Install deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
